@@ -81,27 +81,25 @@ func TestWalletTransactions(t *testing.T) {
 func TestWalletTransactionsSync(t *testing.T) {
 	ctx := context.Background()
 	c := New(testApiKey)
-	filter := WalletTransactionsSyncFilter{
-		Wallet: Wallet{
-			Address:    "0x742d35Cc6634C0532925a3b844Bc454e4438f44e",
-			Blockchain: "ethereum",
-		},
-	}
-	res, err := c.WalletTransactionsSync(ctx, filter)
-	require.Nil(t, err)
-	require.Equal(t, res, SyncingStatus)
 
-	filter.Wallets = []WalletShort{
+	_, err := c.WalletTransactionsSync(ctx, []Wallet{})
+	require.NotNil(t, err, err)
+
+	wallets := []Wallet{
 		{
 			Address:      "0x1234567890abcdef1234567890abcdef12345678",
 			ConnectionID: "ethereum",
 		},
-		{
-			Address:      "0x742d35Cc6634C0532925a3b844Bc454e4438f44e",
-			ConnectionID: "ethereum",
-		},
 	}
-	res, err = c.WalletTransactionsSync(ctx, filter)
+	res, err := c.WalletTransactionsSync(ctx, wallets)
+	require.Nil(t, err, err)
+	require.Equal(t, res, SyncingStatus)
+
+	wallets = append(wallets, Wallet{
+		Address:      "0x742d35Cc6634C0532925a3b844Bc454e4438f44e",
+		ConnectionID: "ethereum",
+	})
+	res, err = c.WalletTransactionsSync(ctx, wallets)
 	require.Nil(t, err, err)
 	require.Equal(t, res, SyncingStatus)
 }

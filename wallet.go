@@ -152,24 +152,22 @@ func (c *Client) WalletTransactions(ctx context.Context, filter WalletTransactio
 	return res, err
 }
 
-type WalletTransactionsSyncFilter struct {
-	Wallet  Wallet
-	Wallets []WalletShort
-}
-
 // WalletTransactionsSync initiate syncing process to update transaction data.
-func (c *Client) WalletTransactionsSync(ctx context.Context, filter WalletTransactionsSyncFilter) (SyncStatus, error) {
+func (c *Client) WalletTransactionsSync(ctx context.Context, wallets []Wallet) (SyncStatus, error) {
 	var body io.Reader
 	q := url.Values{}
-	q.Add("address", filter.Wallet.Address)
-	q.Add("connectionId", filter.Wallet.ConnectionID)
-	q.Add("blockchain", filter.Wallet.Blockchain)
 
-	if len(filter.Wallets) > 0 {
+	if len(wallets) > 0 {
+		q.Add("address", wallets[0].Address)
+		q.Add("connectionId", wallets[0].ConnectionID)
+		q.Add("blockchain", wallets[0].Blockchain)
+	}
+
+	if len(wallets) > 1 {
 		data := struct {
-			Wallets []WalletShort `json:"wallets"`
+			Wallets []Wallet `json:"wallets"`
 		}{
-			Wallets: filter.Wallets,
+			Wallets: wallets[1:],
 		}
 		b, err := json.Marshal(data)
 		if err != nil {
