@@ -163,8 +163,12 @@ func (c *Client) WalletTransactionsSync(ctx context.Context, wallets []Wallet) (
 	q := url.Values{}
 
 	if len(wallets) > 0 {
+		connID := wallets[0].ConnectionID
+		if connID == "" {
+			connID = ConnectionIDAll
+		}
 		q.Add("address", wallets[0].Address)
-		q.Add("connectionId", wallets[0].ConnectionID)
+		q.Add("connectionId", connID)
 		q.Add("blockchain", wallets[0].Blockchain)
 	}
 
