@@ -160,34 +160,21 @@ func (c *Client) WalletTransactions(ctx context.Context, filter WalletTransactio
 // WalletTransactionsSync initiate syncing process to update transaction data.
 func (c *Client) WalletTransactionsSync(ctx context.Context, wallets []Wallet) (SyncStatus, error) {
 	var body io.Reader
-	q := url.Values{}
-
-	if len(wallets) > 0 {
-		connID := wallets[0].ConnectionID
-		if connID == "" {
-			connID = ConnectionIDAll
-		}
-		q.Add("address", wallets[0].Address)
-		q.Add("connectionId", connID)
-		q.Add("blockchain", wallets[0].Blockchain)
+	data := struct {
+		Wallets []Wallet `json:"wallets"`
+	}{
+		Wallets: wallets,
 	}
-
-	if len(wallets) > 1 {
-		data := struct {
-			Wallets []Wallet `json:"wallets"`
-		}{
-			Wallets: wallets[1:],
-		}
-		b, err := json.Marshal(data)
-		if err != nil {
-			return UnknownStatus, err
-		}
-		body = bytes.NewReader(b)
+	b, err := json.Marshal(data)
+	if err != nil {
+		return UnknownStatus, err
 	}
+	body = bytes.NewReader(b)
+
 	type result struct {
 		Status SyncStatus `json:"status"`
 	}
-	req, _ := http.NewRequestWithContext(ctx, http.MethodPatch, host+"/wallet/transactions?"+q.Encode(), body)
+	req, _ := http.NewRequestWithContext(ctx, http.MethodPatch, host+"/wallet/transactions", body)
 	res, err := do[result](c, req)
 	return res.Status, err
 }

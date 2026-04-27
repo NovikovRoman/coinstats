@@ -83,8 +83,8 @@ type Coin struct {
 
 type Wallet struct {
 	Address      string `json:"address"`
-	ConnectionID string `json:"connectionId"`
-	Blockchain   string `json:"blockchain"`
+	ConnectionID string `json:"connectionId,omitempty"`
+	Blockchain   string `json:"blockchain,omitempty"`
 }
 
 type WalletShort struct {

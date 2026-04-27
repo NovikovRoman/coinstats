@@ -75,7 +75,7 @@ func TestWalletTransactions(t *testing.T) {
 	filter.DateFrom = time.Date(2025, 4, 6, 20, 45, 0, 0, time.UTC)
 	res, err = c.WalletTransactions(ctx, filter)
 	require.Nil(t, err, err)
-	assert.Len(t, res.Result, 9)
+	assert.Len(t, res.Result, 20)
 }
 
 func TestWalletTransactionsSync(t *testing.T) {

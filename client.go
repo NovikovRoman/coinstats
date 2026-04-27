@@ -70,6 +70,7 @@ func (c *Client) addShareToken(req *http.Request) {
 
 func do[T any](client *Client, req *http.Request) (T, error) {
 	client.addApiKey(req)
+	req.Header.Set("Content-Type", "application/json")
 
 	var data T
 	resp, err := client.httpClient.Do(req)
