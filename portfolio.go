@@ -102,35 +102,21 @@ type PortfolioCoinsFilter struct {
 	IncludeRiskScore *bool
 }
 
-type portfolioProfit struct {
-	AllTime    TopCurrency `json:"allTime"`
-	Hour24     TopCurrency `json:"hour24"`
-	LastTrade  TopCurrency `json:"lastTrade"`
-	Unrealized TopCurrency `json:"unrealized"`
-	Realized   TopCurrency `json:"realized"`
-}
-
-type portfolioAvgProfit struct {
-	AllTime    TopCurrency `json:"allTime"`
-	Hour24     TopCurrency `json:"hour24"`
-	LastTrade  TopCurrency `json:"lastTrade"`
-	Unrealized TopCurrency `json:"unrealized"`
-}
-
 type PortfolioCoinResult struct {
 	Result []struct {
-		Count           float64            `json:"count"`
-		Coin            coin               `json:"coin"`
-		Price           TopCurrency        `json:"price"`
-		ProfitPercent   portfolioProfit    `json:"profitPercent"`
-		Profit          portfolioProfit    `json:"profit"`
-		AverageBuy      portfolioAvgProfit `json:"averageBuy"`
-		AverageSell     portfolioAvgProfit `json:"averageSell"`
-		LiquidityScore  float64            `json:"liquidityScore"`
-		VolatilityScore float64            `json:"volatilityScore"`
-		MarketCapScore  float64            `json:"marketCapScore"`
-		RiskScore       float64            `json:"riskScore"`
-		AvgChange       float64            `json:"avgChange"`
+		Count           float64     `json:"count"`
+		Coin            Сoin        `json:"coin"`
+		Price           TopCurrency `json:"price"`
+		ProfitPercent   Profit      `json:"profitPercent"`
+		Profit          Profit      `json:"profit"`
+		AverageBuy      Profit      `json:"averageBuy"`
+		AverageSell     Profit      `json:"averageSell"`
+		LiquidityScore  float64     `json:"liquidityScore"`
+		VolatilityScore float64     `json:"volatilityScore"`
+		MarketCapScore  float64     `json:"marketCapScore"`
+		RiskScore       float64     `json:"riskScore"`
+		AvgChange       float64     `json:"avgChange"`
+		TotalCost       TopCurrency `json:"totalCost"`
 	} `json:"result"`
 }
 
@@ -181,7 +167,7 @@ type PortfolioTransactionFilter struct {
 }
 
 type PortfolioTransactionResult struct {
-	Meta metaShort              `json:"meta"`
+	Meta MetaShort              `json:"meta"`
 	Data []PortfolioTransaction `json:"data"`
 }
 

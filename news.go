@@ -93,13 +93,12 @@ const (
 )
 
 type NewsByTypeFilter struct {
-	Type  NewsType
 	Page  int
 	Limit int
 }
 
 // NewsByType return cryptocurrency news articles based on a specific type.
-func (c *Client) NewsByType(ctx context.Context, filter NewsByTypeFilter) ([]NewsResult, error) {
+func (c *Client) NewsByType(ctx context.Context, t NewsType, filter NewsByTypeFilter) ([]NewsResult, error) {
 	q := url.Values{}
 	if filter.Page > 0 {
 		q.Add("page", strconv.Itoa(filter.Page))
@@ -108,7 +107,7 @@ func (c *Client) NewsByType(ctx context.Context, filter NewsByTypeFilter) ([]New
 		q.Add("limit", strconv.Itoa(filter.Limit))
 	}
 	req, _ := http.NewRequestWithContext(ctx, http.MethodGet,
-		host+"/news/type/"+url.QueryEscape(string(filter.Type))+"?"+q.Encode(), nil)
+		host+"/news/type/"+url.QueryEscape(string(t))+"?"+q.Encode(), nil)
 	res, err := do[[]NewsResult](c, req)
 	return res, err
 }

@@ -123,24 +123,24 @@ type Blockchain struct {
 }
 
 type Thresholds struct {
-	GreaterThan float64
-	Equals      float64
-	LessThan    float64
+	GreaterThan *float64
+	Equals      *float64
+	LessThan    *float64
 }
 
 func (t Thresholds) setQuery(q *url.Values, name string) bool {
 	ok := false
-	if t.GreaterThan != 0 {
+	if t.GreaterThan != nil {
 		ok = true
-		q.Add(name+"~greaterThan", fmt.Sprintf("%f", t.GreaterThan))
+		q.Add(name+"~greaterThan", fmt.Sprintf("%f", *t.GreaterThan))
 	}
-	if t.Equals != 0 {
+	if t.Equals != nil {
 		ok = true
-		q.Add(name+"~equals", fmt.Sprintf("%f", t.Equals))
+		q.Add(name+"~equals", fmt.Sprintf("%f", *t.Equals))
 	}
-	if t.LessThan != 0 {
+	if t.LessThan != nil {
 		ok = true
-		q.Add(name+"~lessThan", fmt.Sprintf("%f", t.LessThan))
+		q.Add(name+"~lessThan", fmt.Sprintf("%f", *t.LessThan))
 	}
 	return ok
 }
@@ -182,7 +182,7 @@ type PortfolioTransaction struct {
 		CurrentValue  float64 `json:"currentValue"`
 	} `json:"profitLoss"`
 	Fee struct {
-		Coin        coin    `json:"coin"`
+		Coin        Сoin    `json:"coin"`
 		Count       float64 `json:"count"`
 		TotalWorth  float64 `json:"totalWorth"`
 		Price       float64 `json:"price"`
@@ -203,7 +203,7 @@ type PortfolioTransaction struct {
 	Transfers []struct {
 		TransferType string `json:"transferType"`
 		Items        []struct {
-			Coin        coin    `json:"coin"`
+			Coin        Сoin    `json:"coin"`
 			Count       float64 `json:"count"`
 			ToAddress   string  `json:"toAddress"`
 			FromAddress string  `json:"fromAddress"`
@@ -400,7 +400,7 @@ type NftAsset struct {
 	ListPrice     float64   `json:"listPrice"`
 }
 
-type meta struct {
+type Meta struct {
 	Page            int  `json:"page"`
 	Limit           int  `json:"limit"`
 	ItemCount       int  `json:"itemCount"`
@@ -409,12 +409,12 @@ type meta struct {
 	HasNextPage     bool `json:"hasNextPage"`
 }
 
-type metaShort struct {
+type MetaShort struct {
 	Page  int `json:"page"`
 	Limit int `json:"limit"`
 }
 
-type coin struct {
+type Сoin struct {
 	Rank           int     `json:"rank"`
 	Identifier     string  `json:"identifier"`
 	Symbol         string  `json:"symbol"`
@@ -426,4 +426,19 @@ type coin struct {
 	Volume         float64 `json:"volume"`
 	IsFake         bool    `json:"isFake"`
 	IsFiat         bool    `json:"isFiat"`
+}
+
+type PLSummary struct {
+	TotalValue    TopCurrency `json:"totalValue"`
+	TotalCost     TopCurrency `json:"totalCost"`
+	Profit        Profit      `json:"profit"`
+	ProfitPercent Profit      `json:"profitPercent"`
+}
+
+type Profit struct {
+	AllTime    TopCurrency `json:"allTime"`
+	Hour24     TopCurrency `json:"hour24"`
+	LastTrade  TopCurrency `json:"lastTrade"`
+	Unrealized TopCurrency `json:"unrealized"`
+	Realized   TopCurrency `json:"realized"`
 }

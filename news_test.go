@@ -31,10 +31,9 @@ func TestNewsByType(t *testing.T) {
 	ctx := context.Background()
 	c := New(testApiKey)
 	filter := NewsByTypeFilter{
-		Type:  NewsTypeBearish,
 		Limit: 5,
 	}
-	res, err := c.NewsByType(ctx, filter)
+	res, err := c.NewsByType(ctx, NewsTypeBearish, filter)
 	require.Nil(t, err, err)
 	assert.Len(t, res, 5)
 }

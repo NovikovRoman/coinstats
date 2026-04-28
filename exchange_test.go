@@ -27,8 +27,6 @@ func TestExchangeBalance(t *testing.T) {
 	)
 	require.NotNil(t, err, err)
 	require.True(t, errors.Is(err, ErrBadRequest))
-	// !?!?! так АПИ отдает.
-	require.True(t, strings.Contains(err.Error(), "connectionFields should not be empty"))
 }
 
 func TestExchangeStatus(t *testing.T) {

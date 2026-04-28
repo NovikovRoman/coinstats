@@ -13,7 +13,7 @@ type NftTrendingFilter struct {
 }
 
 type NftTrendingResult struct {
-	Meta meta            `json:"meta"`
+	Meta Meta            `json:"meta"`
 	Data []NftCollection `json:"data"`
 }
 
@@ -37,7 +37,7 @@ type NftsByWalletFilter struct {
 }
 
 type NftsByWalletResult struct {
-	Meta meta `json:"meta"`
+	Meta Meta `json:"meta"`
 	Data []struct {
 		Name               string  `json:"name"`
 		Logo               string  `json:"logo"`
@@ -82,7 +82,7 @@ type NftCollectionAssetFilter struct {
 }
 
 type NftCollectionAssetsByAddressResult struct {
-	Meta meta       `json:"meta"`
+	Meta Meta       `json:"meta"`
 	Data []NftAsset `json:"data"`
 }
 

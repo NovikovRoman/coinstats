@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"maps"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -44,14 +45,16 @@ type ExchangeBalanceResult struct {
 
 // ExchangeBalance return cryptocurrency exchange balances.
 func (c *Client) ExchangeBalance(ctx context.Context, connectionID, key, secret string, connFields map[string]string) (ExchangeBalanceResult, error) {
-	connFields["apiKey"] = key
-	connFields["apiSecret"] = secret
+	fields := make(map[string]string, len(connFields)+2)
+	maps.Copy(fields, connFields)
+	fields["apiKey"] = key
+	fields["apiSecret"] = secret
 	data := struct {
 		ConnectionID     string            `json:"connectionId"`
 		ConnectionFields map[string]string `json:"connectionFields"`
 	}{
 		ConnectionID:     connectionID,
-		ConnectionFields: connFields,
+		ConnectionFields: fields,
 	}
 	b, _ := json.Marshal(data)
 	req, _ := http.NewRequestWithContext(ctx, http.MethodPost, host+"/exchange/balance", bytes.NewReader(b))
@@ -81,7 +84,7 @@ type ExchangeTransactionFilter struct {
 }
 
 type ExchangeTransactionResult struct {
-	Meta   metaShort     `json:"meta"`
+	Meta   MetaShort     `json:"meta"`
 	Result []Transaction `json:"result"`
 }
 
@@ -132,4 +135,47 @@ func (c *Client) ExchangeSync(ctx context.Context, portfolioID string) (bool, er
 	}
 	res, err := do[result](c, req)
 	return res.Success, err
+}
+
+type ExchangePLFilter struct {
+	Page   int
+	Limit  int
+	CoinID string
+}
+
+type ExchangePLResult struct {
+	Result []struct {
+		Count           float64     `json:"count"`
+		Coin            Сoin        `json:"coin"`
+		Price           TopCurrency `json:"price"`
+		ProfitPercent   Profit      `json:"profitPercent"`
+		Profit          Profit      `json:"profit"`
+		AverageBuy      Profit      `json:"averageBuy"`
+		AverageSell     Profit      `json:"averageSell"`
+		LiquidityScore  float64     `json:"liquidityScore"`
+		VolatilityScore float64     `json:"volatilityScore"`
+		MarketCapScore  float64     `json:"marketCapScore"`
+		RiskScore       float64     `json:"riskScore"`
+		AvgChange       float64     `json:"avgChange"`
+		TotalCost       TopCurrency `json:"totalCost"`
+	} `json:"result"`
+	Summary PLSummary `json:"summary"`
+}
+
+// ExchangePL return profit/loss data for a specific exchange portfolio.
+func (c *Client) ExchangePL(ctx context.Context, portfolioID string, filter ExchangePLFilter) (ExchangePLResult, error) {
+	q := url.Values{}
+	q.Add("portfolioId", portfolioID)
+	if filter.Page > 0 {
+		q.Add("page", strconv.Itoa(filter.Page))
+	}
+	if filter.Limit > 0 {
+		q.Add("limit", strconv.Itoa(filter.Limit))
+	}
+	if filter.CoinID != "" {
+		q.Add("coinId", filter.CoinID)
+	}
+	req, _ := http.NewRequestWithContext(ctx, http.MethodGet, host+"/exchange/pl?"+q.Encode(), nil)
+	res, err := do[ExchangePLResult](c, req)
+	return res, err
 }

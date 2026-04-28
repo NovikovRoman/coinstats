@@ -35,7 +35,7 @@ type CoinFilter struct {
 }
 
 type CoinResult struct {
-	Meta   meta       `json:"meta"`
+	Meta   Meta       `json:"meta"`
 	Result []CoinBase `json:"result"`
 }
 
@@ -176,7 +176,7 @@ type TickerMarketsFilter struct {
 }
 
 type TickerMarketResult struct {
-	Meta   meta `json:"meta"`
+	Meta   Meta `json:"meta"`
 	Result []struct {
 		CreatedAt  time.Time `json:"_created_at"`
 		UpdatedAt  time.Time `json:"_updated_at"`

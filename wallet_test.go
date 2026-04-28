@@ -147,3 +147,19 @@ func TestWalletDefi(t *testing.T) {
 	require.Greater(t, res.TotalAssets.ETH, 0.0)
 	require.Greater(t, res.TotalAssets.USD, 0.0)
 }
+
+func TestWalletPL(t *testing.T) {
+	ctx := context.Background()
+	c := New(testApiKey)
+	res, err := c.WalletPL(ctx, WalletPLFilter{
+		Wallet: Wallet{
+			Address:      "0x742d35Cc6634C0532925a3b844Bc454e4438f44e",
+			ConnectionID: "ethereum",
+		},
+		Limit: 10,
+		Page:  1,
+	})
+	require.Nil(t, err, err)
+	assert.True(t, len(res.Result) > 0)
+	assert.Greater(t, res.Summary.TotalValue.USD, 0.0)
+}

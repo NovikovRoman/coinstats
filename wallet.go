@@ -103,7 +103,7 @@ type WalletTransactionFilter struct {
 }
 
 type WalletTransactionsResult struct {
-	Meta   metaShort     `json:"meta"`
+	Meta   MetaShort     `json:"meta"`
 	Result []Transaction `json:"result"`
 }
 
@@ -229,5 +229,50 @@ func (c *Client) WalletDefi(ctx context.Context, w Wallet) (Defi, error) {
 	q.Add("blockchain", w.Blockchain)
 	req, _ := http.NewRequestWithContext(ctx, http.MethodGet, host+"/wallet/defi?"+q.Encode(), nil)
 	res, err := do[Defi](c, req)
+	return res, err
+}
+
+type WalletPLItem struct {
+	Count         float64     `json:"count"`
+	Coin          Сoin        `json:"coin"`
+	AverageBuy    Profit      `json:"averageBuy"`
+	AverageSell   Profit      `json:"averageSell"`
+	Price         TopCurrency `json:"price"`
+	Profit        Profit      `json:"profit"`
+	ProfitPercent Profit      `json:"profitPercent"`
+	TotalCost     TopCurrency `json:"totalCost"`
+}
+
+type WalletPLResult struct {
+	Result  []WalletPLItem `json:"result"`
+	Summary PLSummary      `json:"summary"`
+}
+
+type WalletPLFilter struct {
+	Wallet Wallet
+	CoinID string
+	Page   int
+	Limit  int
+}
+
+// WalletPL return profit/loss data for a wallet.
+func (c *Client) WalletPL(ctx context.Context, filter WalletPLFilter) (WalletPLResult, error) {
+	q := url.Values{}
+	if filter.Wallet.Address != "" {
+		q.Add("address", filter.Wallet.Address)
+		q.Add("connectionId", filter.Wallet.ConnectionID)
+		q.Add("blockchain", filter.Wallet.Blockchain)
+	}
+	if filter.CoinID != "" {
+		q.Add("coinId", filter.CoinID)
+	}
+	if filter.Page > 0 {
+		q.Add("page", strconv.Itoa(filter.Page))
+	}
+	if filter.Limit > 0 {
+		q.Add("limit", strconv.Itoa(filter.Limit))
+	}
+	req, _ := http.NewRequestWithContext(ctx, http.MethodGet, host+"/wallet/pl?"+q.Encode(), nil)
+	res, err := do[WalletPLResult](c, req)
 	return res, err
 }
