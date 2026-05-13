@@ -32,16 +32,16 @@ func TestWalletBalance(t *testing.T) {
 	assert.Len(t, res, 0)
 }
 
-func TestWalletBalances(t *testing.T) {
+func TestWalletBalanceMany(t *testing.T) {
 	ctx := context.Background()
 	c := New(testApiKey)
 	filter := WalletBalancesFilter{}
-	_, err := c.WalletBalances(ctx, filter)
+	_, err := c.WalletBalanceMany(ctx, filter)
 	require.NotNil(t, err, err)
 
 	filter.Address = "0x742d35Cc6634C0532925a3b844Bc454e4438f44e"
 	filter.Blockchains = []string{"ethereum"}
-	res, err := c.WalletBalances(ctx, filter)
+	res, err := c.WalletBalanceMany(ctx, filter)
 	require.Nil(t, err, err)
 	assert.True(t, len(res) > 0)
 	assert.Equal(t, res[0].Blockchain, "ethereum")

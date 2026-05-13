@@ -44,7 +44,7 @@ type WalletBalancesFilter struct {
 }
 
 // WalletBalances return cryptocurrency balances for multiple wallets.
-func (c *Client) WalletBalances(ctx context.Context, filter WalletBalancesFilter) ([]WalletMultiBalance, error) {
+func (c *Client) WalletBalanceMany(ctx context.Context, filter WalletBalancesFilter) ([]WalletMultiBalance, error) {
 	blockchains := map[string]struct{}{}
 	for _, b := range filter.Blockchains {
 		blockchains[b] = struct{}{}
@@ -70,7 +70,7 @@ func (c *Client) WalletBalances(ctx context.Context, filter WalletBalancesFilter
 	q.Add("blockchain", strings.Join(filter.Blockchains, ","))
 	q.Add("wallets", strings.Join(wallets, ","))
 
-	req, _ := http.NewRequestWithContext(ctx, http.MethodGet, host+"/wallet/balances?"+q.Encode(), nil)
+	req, _ := http.NewRequestWithContext(ctx, http.MethodGet, host+"/wallet/balance/many?"+q.Encode(), nil)
 	res, err := do[[]WalletMultiBalance](c, req)
 	return res, err
 }

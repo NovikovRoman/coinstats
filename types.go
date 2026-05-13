@@ -57,6 +57,7 @@ type CoinBase struct {
 	PriceChange1h         float64 `json:"priceChange1h"`
 	PriceChange1d         float64 `json:"priceChange1d"`
 	PriceChange1w         float64 `json:"priceChange1w"`
+	PriceChange1m         float64 `json:"priceChange1m"`
 	WebsiteURL            string  `json:"websiteUrl"`
 	RedditURL             string  `json:"redditUrl"`
 	TwitterURL            string  `json:"twitterUrl"`
@@ -106,6 +107,8 @@ type WalletBalance struct {
 	Chain           string  `json:"chain"`
 	Decimals        int64   `json:"decimals"`
 	ContractAddress string  `json:"contractAddress"`
+	WalletAddress   string  `json:"walletAddress"`
+	ConnectionId    string  `json:"connectionId"`
 }
 
 type WalletMultiBalance struct {
