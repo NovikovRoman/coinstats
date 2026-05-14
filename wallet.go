@@ -13,7 +13,9 @@ import (
 	"time"
 )
 
-const ConnectionIDAll = "all"
+const (
+	All = "all"
+)
 
 // Blockchains return the list of blockchains supported by CoinStats.
 func (c *Client) Blockchains(ctx context.Context) ([]Blockchain, error) {
@@ -25,7 +27,7 @@ func (c *Client) Blockchains(ctx context.Context) ([]Blockchain, error) {
 // WalletBalance return cryptocurrency balances for any blockchain wallet.
 func (c *Client) WalletBalance(ctx context.Context, w Wallet) ([]WalletBalance, error) {
 	if w.ConnectionID == "" && w.Blockchain == "" {
-		w.ConnectionID = ConnectionIDAll
+		w.ConnectionID = All
 	}
 	q := url.Values{
 		"address":      []string{w.Address},
@@ -56,7 +58,7 @@ func (c *Client) WalletBalanceMany(ctx context.Context, filter WalletBalancesFil
 			return []WalletMultiBalance{}, ErrBadWalletData
 		}
 		if w.ConnectionID == "" {
-			w.ConnectionID = ConnectionIDAll
+			w.ConnectionID = All
 		}
 		wallets = append(wallets, fmt.Sprintf("%s:%s", w.ConnectionID, w.Address))
 	}
@@ -115,7 +117,7 @@ func (c *Client) WalletTransactions(ctx context.Context, filter WalletTransactio
 			return WalletTransactionsResult{}, ErrBadWalletData
 		}
 		if w.ConnectionID == "" {
-			w.ConnectionID = ConnectionIDAll
+			w.ConnectionID = All
 		}
 		wallets = append(wallets, fmt.Sprintf("%s:%s", w.ConnectionID, w.Address))
 	}
@@ -210,7 +212,7 @@ func (c *Client) WalletCharts(ctx context.Context, t ChartType, w []WalletShort,
 	for _, ww := range w {
 		connID := ww.ConnectionID
 		if connID == "" {
-			connID = ConnectionIDAll
+			connID = All
 		}
 		wallets = append(wallets, fmt.Sprintf("%s:%s", connID, ww.Address))
 	}
