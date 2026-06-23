@@ -107,7 +107,6 @@ type WalletBalance struct {
 	Chain           string  `json:"chain"`
 	Decimals        int64   `json:"decimals"`
 	ContractAddress string  `json:"contractAddress"`
-	WalletAddress   string  `json:"walletAddress"`
 	ConnectionId    string  `json:"connectionId"`
 }
 
