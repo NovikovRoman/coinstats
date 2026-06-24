@@ -73,6 +73,8 @@ type CoinBase struct {
 	MarketCapScore  float64  `json:"marketCapScore"`
 	RiskScore       float64  `json:"riskScore"`
 	AvgChange       float64  `json:"avgChange"`
+	AllTimeHigh     float64  `json:"allTimeHigh"`
+	AllTimeLow      float64  `json:"allTimeLow"`
 }
 
 type Coin struct {
