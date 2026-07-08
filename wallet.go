@@ -92,16 +92,17 @@ func (c *Client) WalletSyncStatus(ctx context.Context, w Wallet) (SyncStatus, er
 }
 
 type WalletTransactionFilter struct {
-	Wallet   Wallet
-	Page     int
-	Limit    int
-	DateFrom time.Time
-	DateTo   time.Time
-	Currency string
-	Types    []string
-	TxID     string
-	CoinID   string
-	Wallets  []WalletShort
+	Wallet                Wallet
+	Page                  int
+	Limit                 int
+	DateFrom              time.Time
+	DateTo                time.Time
+	Currency              string
+	HideUnidentifiedCoins bool
+	Types                 []string
+	TxID                  string
+	CoinID                string
+	Wallets               []WalletShort
 }
 
 type WalletTransactionsResult struct {
@@ -122,7 +123,9 @@ func (c *Client) WalletTransactions(ctx context.Context, filter WalletTransactio
 		wallets = append(wallets, fmt.Sprintf("%s:%s", w.ConnectionID, w.Address))
 	}
 
-	q := url.Values{}
+	q := url.Values{
+		"hideUnidentifiedCoins": []string{strconv.FormatBool(filter.HideUnidentifiedCoins)},
+	}
 	if !filter.DateFrom.IsZero() {
 		q.Add("from", filter.DateFrom.Format(time.RFC3339Nano))
 	}
