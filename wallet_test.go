@@ -163,3 +163,19 @@ func TestWalletPL(t *testing.T) {
 	assert.True(t, len(res.Result) > 0)
 	assert.Greater(t, res.Summary.TotalValue.USD, 0.0)
 }
+
+func TestWalletPLHistory(t *testing.T) {
+	ctx := context.Background()
+	c := New(testApiKey)
+	res, err := c.WalletPLHistory(ctx, WalletPLHistoryFilter{
+		Wallet: Wallet{
+			Address:      "0x742d35Cc6634C0532925a3b844Bc454e4438f44e",
+			ConnectionID: "ethereum",
+		},
+		Interval: PLIntervalDaily,
+		Range:    ChartType1m,
+	})
+	require.Nil(t, err, err)
+	assert.True(t, len(res.Result) > 0)
+	assert.Equal(t, res.Meta.Interval, PLIntervalDaily)
+}

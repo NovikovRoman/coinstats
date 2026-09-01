@@ -179,3 +179,39 @@ func (c *Client) ExchangePL(ctx context.Context, portfolioID string, filter Exch
 	res, err := do[ExchangePLResult](c, req)
 	return res, err
 }
+
+type ExchangePLHistoryResult struct {
+	Result []PLHistoryItem `json:"result"`
+	Meta   PLHistoryMeta   `json:"meta"`
+}
+
+type ExchangePLHistoryFilter struct {
+	Interval PLInterval
+	Currency string
+	DateFrom time.Time
+	DateTo   time.Time
+	Range    ChartType
+}
+
+// ExchangePLHistory return profit/loss history for an exchange portfolio over time.
+func (c *Client) ExchangePLHistory(ctx context.Context, portfolioID string, filter ExchangePLHistoryFilter) (ExchangePLHistoryResult, error) {
+	q := url.Values{
+		"portfolioId": []string{portfolioID},
+		"interval":    []string{string(filter.Interval)},
+	}
+	if filter.Currency != "" {
+		q.Add("currency", filter.Currency)
+	}
+	if filter.Range != "" {
+		q.Add("range", string(filter.Range))
+	}
+	if !filter.DateFrom.IsZero() {
+		q.Add("from", filter.DateFrom.Format(time.DateOnly))
+	}
+	if !filter.DateTo.IsZero() {
+		q.Add("to", filter.DateTo.Format(time.DateOnly))
+	}
+	req, _ := http.NewRequestWithContext(ctx, http.MethodGet, host+"/exchange/pl/history?"+q.Encode(), nil)
+	res, err := do[ExchangePLHistoryResult](c, req)
+	return res, err
+}

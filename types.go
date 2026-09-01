@@ -34,6 +34,16 @@ const (
 	ChartTypeAll ChartType = "all"
 )
 
+type PLInterval string
+
+const (
+	PLIntervalHourly  PLInterval = "hourly"
+	PLIntervalDaily   PLInterval = "daily"
+	PLIntervalWeekly  PLInterval = "weekly"
+	PLIntervalMonthly PLInterval = "monthly"
+	PLIntervalYearly  PLInterval = "yearly"
+)
+
 type SortDir string
 
 const (
@@ -437,6 +447,21 @@ type PLSummary struct {
 	TotalCost     TopCurrency `json:"totalCost"`
 	Profit        Profit      `json:"profit"`
 	ProfitPercent Profit      `json:"profitPercent"`
+}
+
+type PLHistoryItem struct {
+	Date              time.Time `json:"date"`
+	ProfitLoss        float64   `json:"profitLoss"`
+	ProfitLossPercent float64   `json:"profitLossPercent"`
+}
+
+type PLHistoryMeta struct {
+	Currency     string     `json:"currency"`
+	Range        ChartType  `json:"range"`
+	Interval     PLInterval `json:"interval"`
+	From         time.Time  `json:"from"`
+	To           time.Time  `json:"to"`
+	LastSyncedAt time.Time  `json:"lastSyncedAt"`
 }
 
 type Profit struct {

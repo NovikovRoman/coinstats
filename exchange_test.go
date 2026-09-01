@@ -69,3 +69,15 @@ func TestExchangeSync(t *testing.T) {
 	require.True(t, errors.Is(err, ErrBadRequest))
 	require.True(t, strings.Contains(err.Error(), "Portfolio not found"))
 }
+
+func TestExchangePLHistory(t *testing.T) {
+	ctx := context.Background()
+	c := New(testApiKey)
+	_, err := c.ExchangePLHistory(ctx, "unknown", ExchangePLHistoryFilter{
+		Interval: PLIntervalDaily,
+		Range:    ChartType1m,
+	})
+	require.NotNil(t, err, err)
+	require.True(t, errors.Is(err, ErrNotFound))
+	require.True(t, strings.Contains(err.Error(), "Portfolio not found"))
+}

@@ -286,6 +286,46 @@ func (c *Client) PortfolioSnapshotItems(ctx context.Context, passcode, portfolio
 	return res, err
 }
 
+type PortfolioPLHistoryResult struct {
+	Result []PLHistoryItem `json:"result"`
+	Meta   PLHistoryMeta   `json:"meta"`
+}
+
+type PortfolioPLHistoryFilter struct {
+	Interval PLInterval
+	Currency string
+	DateFrom time.Time
+	DateTo   time.Time
+	Range    ChartType
+}
+
+// PortfolioPLHistory return profit/loss history for a portfolio over time.
+func (c *Client) PortfolioPLHistory(ctx context.Context, passcode, portfolioID string, filter PortfolioPLHistoryFilter) (PortfolioPLHistoryResult, error) {
+	q := url.Values{
+		"interval": []string{string(filter.Interval)},
+	}
+	if !c.hasShareToken() {
+		q.Add("portfolioId", portfolioID)
+	}
+	if filter.Currency != "" {
+		q.Add("currency", filter.Currency)
+	}
+	if filter.Range != "" {
+		q.Add("range", string(filter.Range))
+	}
+	if !filter.DateFrom.IsZero() {
+		q.Add("from", filter.DateFrom.Format(time.DateOnly))
+	}
+	if !filter.DateTo.IsZero() {
+		q.Add("to", filter.DateTo.Format(time.DateOnly))
+	}
+	req, _ := http.NewRequestWithContext(ctx, http.MethodGet, host+"/portfolio/pl/history?"+q.Encode(), nil)
+	c.addShareToken(req)
+	req.Header.Set("passcode", passcode)
+	res, err := do[PortfolioPLHistoryResult](c, req)
+	return res, err
+}
+
 // PortfolioStatus return portfolio sync status
 func (c *Client) PortfolioStatus(ctx context.Context, portfolioID string) (SyncStatus, error) {
 	q := url.Values{

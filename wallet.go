@@ -281,3 +281,45 @@ func (c *Client) WalletPL(ctx context.Context, filter WalletPLFilter) (WalletPLR
 	res, err := do[WalletPLResult](c, req)
 	return res, err
 }
+
+type WalletPLHistoryResult struct {
+	Result []PLHistoryItem `json:"result"`
+	Meta   PLHistoryMeta   `json:"meta"`
+}
+
+type WalletPLHistoryFilter struct {
+	Wallet   Wallet
+	Interval PLInterval
+	Currency string
+	DateFrom time.Time
+	DateTo   time.Time
+	Range    ChartType
+}
+
+// WalletPLHistory return profit/loss history for a wallet over time.
+func (c *Client) WalletPLHistory(ctx context.Context, filter WalletPLHistoryFilter) (WalletPLHistoryResult, error) {
+	if filter.Wallet.ConnectionID == "" && filter.Wallet.Blockchain == "" {
+		filter.Wallet.ConnectionID = All
+	}
+	q := url.Values{
+		"address":      []string{filter.Wallet.Address},
+		"connectionId": []string{filter.Wallet.ConnectionID},
+		"blockchain":   []string{filter.Wallet.Blockchain},
+		"interval":     []string{string(filter.Interval)},
+	}
+	if filter.Currency != "" {
+		q.Add("currency", filter.Currency)
+	}
+	if filter.Range != "" {
+		q.Add("range", string(filter.Range))
+	}
+	if !filter.DateFrom.IsZero() {
+		q.Add("from", filter.DateFrom.Format(time.DateOnly))
+	}
+	if !filter.DateTo.IsZero() {
+		q.Add("to", filter.DateTo.Format(time.DateOnly))
+	}
+	req, _ := http.NewRequestWithContext(ctx, http.MethodGet, host+"/wallet/pl/history?"+q.Encode(), nil)
+	res, err := do[WalletPLHistoryResult](c, req)
+	return res, err
+}
