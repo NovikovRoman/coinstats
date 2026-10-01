@@ -14,15 +14,16 @@ const host = "https://openapiv1.coinstats.app"
 type Client struct {
 	apiKey     string
 	shareToken string
-	transport  *http.Transport
 	httpClient *http.Client
 }
 
 type Opt func(*Client)
 
-func WithTransport(transport *http.Transport) Opt {
+func WithHttpClient(httpClient *http.Client) Opt {
 	return func(c *Client) {
-		c.transport = transport
+		if httpClient != nil {
+			c.httpClient = httpClient
+		}
 	}
 }
 
@@ -34,24 +35,23 @@ func WithShareToken(token string) Opt {
 
 func New(apiKey string, opts ...Opt) *Client {
 	c := &Client{
-		apiKey: apiKey,
-		httpClient: &http.Client{
-			Timeout: 60 * time.Second,
-		},
-		transport: &http.Transport{
-			ForceAttemptHTTP2:     true,
-			MaxIdleConns:          100,
-			IdleConnTimeout:       90 * time.Second,
-			TLSHandshakeTimeout:   10 * time.Second,
-			ExpectContinueTimeout: 1 * time.Second,
-		},
+		apiKey:     apiKey,
+		httpClient: defaultHttpClient(),
 	}
 
 	for _, opt := range opts {
 		opt(c)
 	}
-	c.httpClient.Transport = c.transport
 	return c
+}
+
+func defaultHttpClient() *http.Client {
+	t := http.DefaultTransport.(*http.Transport).Clone()
+	t.MaxIdleConnsPerHost = 10 // all requests go to a single host
+	return &http.Client{
+		Timeout:   30 * time.Second,
+		Transport: t,
+	}
 }
 
 func (c *Client) addApiKey(req *http.Request) {
